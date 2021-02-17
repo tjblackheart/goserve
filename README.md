@@ -14,7 +14,7 @@ To suppress the "insecure certificate" warning on Chrom(e/ium), go to [chrome://
 
 ## Flags
 
-```bash
+```
 Usage of goserve:
   -a	Bind to all interfaces (default: Loopback only)
   -c	Use http caching (default: false)

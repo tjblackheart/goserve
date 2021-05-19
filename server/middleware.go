@@ -26,7 +26,7 @@ func cache(next http.Handler) http.Handler {
 	})
 }
 
-func recoverErr(next http.Handler) http.Handler {
+func recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {

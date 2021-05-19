@@ -12,15 +12,17 @@ func main() {
 	var caching bool
 	var all bool
 	var tls bool
+	var force bool
 
 	flag.StringVar(&port, "p", "9000", "Port")
-	flag.BoolVar(&caching, "c", false, "Use http caching (default: false)")
+	flag.BoolVar(&caching, "c", false, "Use http caching")
 	flag.BoolVar(&all, "a", false, "Bind to all interfaces (default: Loopback only)")
-	flag.BoolVar(&tls, "s", false, "Use TLS. Will generate certs if they are not present (default: false)")
+	flag.BoolVar(&tls, "s", false, "Use TLS. Will generate certs if they are not present")
+	flag.BoolVar(&force, "f", false, "Force certificate generation")
 	flag.Parse()
 
 	dir := flag.Arg(0)
-	s, err := server.New(dir, port, caching, all, tls)
+	s, err := server.New(dir, port, caching, all, tls, force)
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -21,9 +21,13 @@ type server struct {
 	signals             chan os.Signal
 }
 
-func New(dir, port string, caching, all, tls bool) (*server, error) {
-	port = strings.Trim(port, ":")
-	dir, err := validateDir(dir)
+func New(dir, port string, caching, all, tls, force bool) (*server, error) {
+	port, err := getPort(strings.Trim(port, ":"))
+	if err != nil {
+		return nil, err
+	}
+
+	dir, err = validateDir(dir)
 	if err != nil {
 		return nil, err
 	}
@@ -40,14 +44,14 @@ func New(dir, port string, caching, all, tls bool) (*server, error) {
 		signals: sigc,
 	}
 
-	if tls == true {
+	if tls {
 		userCache, err := os.UserCacheDir()
 		if err != nil {
 			return nil, errors.New("Could not get user cache: " + err.Error())
 		}
 		s.certPath = fmt.Sprintf("%s/goserve-certs", userCache)
 
-		if err := generateCerts(s.certPath); err != nil {
+		if err := generateCerts(s.certPath, force); err != nil {
 			return nil, errors.New("Error generating certificates: " + err.Error())
 		}
 	}
@@ -78,10 +82,10 @@ func (s server) Serve() {
 			host := fmt.Sprintf("%s:%s", ip, s.port)
 			srv := &http.Server{Handler: r, Addr: host}
 
-			go func(dir string, s *http.Server) {
-				log.Printf("Serving from %s at http://%s ...", dir, host)
+			go func() {
+				log.Printf("Serving from %s at http://%s ...", s.dir, host)
 				log.Fatalln(srv.ListenAndServe())
-			}(s.dir, srv)
+			}()
 		}
 	}
 
@@ -111,7 +115,7 @@ func (s server) Serve() {
 
 func (s server) router() *mux.Router {
 	r := mux.NewRouter()
-	r.Use(recoverErr, requestLog, gzip)
+	r.Use(recoverPanic, requestLog, gzip)
 
 	if s.caching {
 		r.Use(cache)

@@ -8,7 +8,34 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 )
+
+func getPort(port string) (string, error) {
+	_port, err := strconv.Atoi(port)
+	if err != nil {
+		return "", err
+	}
+
+	if _port <= 0 || _port > 65535 {
+		return "", errors.New("invalid port number: " + port)
+	}
+
+	ls, err := net.Listen("tcp", fmt.Sprintf(":%d", _port))
+	for err != nil {
+		log.Printf("Port %d is unavailable, trying next one.\n", _port)
+		_port += 1
+
+		if _port > 65535 {
+			return "", errors.New("maximum port number reached - none available")
+		}
+
+		ls, err = net.Listen("tcp", fmt.Sprintf(":%d", _port))
+	}
+	ls.Close()
+
+	return fmt.Sprintf("%d", _port), nil
+}
 
 func getIPs() (list []string, loopback string, err error) {
 	addrs, err := net.InterfaceAddrs()
@@ -55,7 +82,7 @@ func validateDir(dir string) (string, error) {
 	return dir, nil
 }
 
-func generateCerts(path string) error {
+func generateCerts(path string, force bool) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		if err = os.Mkdir(path, 0700); err != nil {
 			return err
@@ -67,7 +94,7 @@ func generateCerts(path string) error {
 		log.Fatalln(err)
 	}
 
-	if len(match) == 2 {
+	if !force && len(match) == 2 {
 		log.Println("Using existing certificates from", path)
 		return nil
 	}

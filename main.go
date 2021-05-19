@@ -8,11 +8,13 @@ import (
 )
 
 func main() {
-	var port string
-	var caching bool
-	var all bool
-	var tls bool
-	var force bool
+	var (
+		port    string
+		caching bool
+		all     bool
+		tls     bool
+		force   bool
+	)
 
 	flag.StringVar(&port, "p", "9000", "Port")
 	flag.BoolVar(&caching, "c", false, "Use http caching")

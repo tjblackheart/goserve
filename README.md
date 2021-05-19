@@ -16,9 +16,10 @@ To suppress the "insecure certificate" warning on Chrom(e/ium), go to [chrome://
 
 ```
 Usage of goserve:
-  -a	Bind to all interfaces (default: Loopback only)
-  -c	Use http caching (default: false)
+  -a  Bind to all interfaces (default: Loopback only)
+  -c  Use http caching
+  -f  Force certificate generation
   -p string
-    	Port (default "9000")
-  -s	Use TLS. Will generate certs if they are not present (default: false)
+      Port (default "9000")
+  -s  Use TLS. Will generate certs if they are not present
 ```

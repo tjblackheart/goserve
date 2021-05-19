@@ -1,6 +1,6 @@
 # Goserve
 
-A simple webserver for static files served from localhost so that you don't need to use npm packages. TLS encryption included.
+A simple webserver for static files served from localhost so that you don't need to use npm packages - TLS included.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ To suppress the "insecure certificate" warning on Chrom(e/ium), go to [chrome://
 
 ## Flags
 
-```
+```bash
 Usage of goserve:
   -a  Bind to all interfaces (default: Loopback only)
   -c  Use http caching
